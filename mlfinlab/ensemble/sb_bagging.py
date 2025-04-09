@@ -14,7 +14,7 @@ from sklearn.ensemble._bagging import BaseBagging
 from sklearn.ensemble._base import _partition_estimators
 from sklearn.base import ClassifierMixin, RegressorMixin
 from sklearn.utils.random import sample_without_replacement
-from sklearn.utils import indices_to_mask
+# from sklearn.utils import indices_to_mask
 from sklearn.metrics import accuracy_score, r2_score
 from sklearn.utils.validation import has_fit_parameter
 from sklearn.utils import check_random_state, check_array, check_consistent_length, check_X_y
@@ -434,7 +434,8 @@ class SequentiallyBootstrappedBaggingClassifier(SequentiallyBootstrappedBaseBagg
                                                 self.sequentially_bootstrapped_samples_,
                                                 self.estimators_features_):
             # Create mask for OOB samples
-            mask = ~indices_to_mask(samples, n_samples)
+            mask = np.ones(n_samples, dtype=bool)
+            mask[samples] = False
 
             if hasattr(estimator, "predict_proba"):
                 predictions[mask, :] += estimator.predict_proba(
@@ -568,7 +569,8 @@ class SequentiallyBootstrappedBaggingRegressor(SequentiallyBootstrappedBaseBaggi
                                                 self.sequentially_bootstrapped_samples_,
                                                 self.estimators_features_):
             # Create mask for OOB samples
-            mask = ~indices_to_mask(samples, n_samples)
+            mask = np.ones(n_samples, dtype=bool)
+            mask[samples] = False
 
             predictions[mask] += estimator.predict((X[mask, :])[:, features])
             n_predictions[mask] += 1
